@@ -1,0 +1,48 @@
+1. 目的
+将公共的功能组件提取出来，在需要的地方切入。
+class A {
+	void funcA(){
+		/*logDataCode*/
+		/*getCache*/
+	}
+}
+class B {
+	void funcB(){
+		/*logDataCode*/
+		/*getCache*/
+	}
+}
+AOP就是将logDataCode和getCache这样公共的代码提取到一个地方（被称为切面）。假设我们这样设计切面：
+class Aspect{
+	void handleAspect(xxx){ // 切面是应该接受参数的，即类A和类B希望的功能并不是完成一致，希望能够个性化。
+		/*logDataCode*/
+		/*getCache*/
+	}
+}
+现在的做法并不是直接在funcA和funcB里直接调用handleAspect，这样的话就成为了公共函数了。
+
+而AOP的做法是这样设计切面的：
+class Aspect{
+	void handleAspect(func, xxx){ // 切面是应该接受参数的，即类A和类B希望的功能并不是完成一致，希望能够个性化。
+		(1) call func
+		/*logDataCode*/
+		(2) call func
+		/*getCache*/
+		(3) call func
+	}
+}
+即采用代理模式。将需要注入的地方(func)给包起来。
+这样相比公共函数的好处就是更加灵活地对func进行包装处理。
+如今在Java中，将AOP利用Java的注解又变得更加灵活。--有点像python中的装饰器。
+
+2. 装饰器和代理模式的区别
+既然谈到AOP采用代理模式有点类似python中的装饰器，那么代理模式和装饰模式的区别在哪里？
+代理模式-通俗地讲：
+client A -- 代理 B -- 类C
+客户端与代理B通信，A对于C是无感知的。在代理B中，会new一个类C的对象，然后调用C的方法，然后代理再做一次包装给出去。
+装饰模式-通俗地讲：
+client A -C-> 装饰器 B
+可以看到，客户端自己new一个C对象，传递给装饰器B，然后B对传过来的C进行包装。所以A对于C是有感知的。
+这就是两者的区别。 
+
+

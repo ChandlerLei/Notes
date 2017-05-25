@@ -1,0 +1,4 @@
+1. Spring概念
+容器：其实Spring就是一个容器-IoC(DI)和AOP的容器框架。
+轻量级：并不是代码jar包有多大，而是说是非侵入性的-基于Spring开发的应用可以不依赖Spring的API-也就是说我们写的代码不需要实现spring的接口、不需要继承spring的类，就可以使用spring提供的功能。
+

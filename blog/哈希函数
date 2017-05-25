@@ -1,0 +1,28 @@
+哈希
+哈希函数：A hash function is any function that can be used to map data of arbitrary size to data of fixed size.
+One use is a data structure called a hash table.
+They are also useful in cryptography.
+
+之前理解的哈希表，其实是哈希函数的一个应用。哈希表的用途是为了搜索，fixed size由情况而定，一定不会太大。
+
+哈希函数也可以分为cryptographic hash function和non-cryptographic hash function
+non-cryptographic hash function: murmur hash/java hashCode
+cryptographic hash function: SHA-256/MD5
+
+A cryptographic hash function aims to guarantee a number of security properties. Most importantly that it's hard to find collisions or pre-images and that the output appears random. (There are a few more properties, and "hard" has well defined bounds in this context, but that's not important here.)
+
+Non cryptographic hash functions just try to avoid collisions for non malicious input.Some aim to detect accidental changes in data(CRCs), others try to put objects into different buckets in a hash table with as few collisions as possible.
+In exchange for weaker guarantees they are typically (much) faster.
+
+murmur hash：其实就是input data变成了任意的字符串，而fixed size变为2^32(32位)或者2^64(64位).
+MurmurHash provides the following benefits:
+simple (in term of number of generated assembly instructions).
+good distribution (passing chi-squared tests for practically all keysets & bucket sizes.
+good avalanche behavior (max bias of 0.5%).
+good collision resistance (passes Bob Jenkin's frog.c torture-test. No collisions possible for 4-byte keys, no small (1- to 7-bit) differentials).
+great performance on Intel/AMD hardware, good tradeoff between hash quality and CPU consumption.
+是否可以有以下这个用途？还需要调研以下：。。。。。。
+用途：比如input data不是特别庞大的情况下，我们希望可以平均的切分N份，此时我们就可以将input data先通过murmur hash得到hashcode，然后%N，这样就可以切分成N份了。
+
+SHA-2
+熟知加密哈希，其实就是input为任意的字符串，output是fixed size=256位的字符串而已。

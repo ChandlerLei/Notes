@@ -1,0 +1,26 @@
+1. package
+Java中的package就是相当于对多个.java文件的封装。
+package的名字应当全部小写。
+一个.java文件称为一个编译单元，在编译一个.java文件的时候，Java会为.java文件中的每个类都生产一个.class文件。
+
+2. 默认权限
+在类中不加任何权限限定符，则默认是同在一个包中是可以访问的。
+protected：在子类中都是可访问的。
+需要注意的是：protected>package
+即protected在包中，无论是否子类都是可访问的。
+            | Class | Package | Subclass | Subclass | World
+            |       |         |(same pkg)|(diff pkg)| 
+————————————+———————+—————————+——————————+——————————+————————
+public      |   +   |    +    |    +     |     +    |   +     
+————————————+———————+—————————+——————————+——————————+————————
+protected   |   +   |    +    |    +     |     +    |   o     
+————————————+———————+—————————+——————————+——————————+————————
+no modifier |   +   |    +    |    +     |     o    |   o
+————————————+———————+—————————+——————————+——————————+————————
+private     |   +   |    o    |    o     |     o    |   o
+
+
+3. 我们知道一个编译单元只能有一个public的类
+可以有多个非public类，非public只能是package access的，不可是private/protected的。
+所以非public的类是拥有package权限的。
+

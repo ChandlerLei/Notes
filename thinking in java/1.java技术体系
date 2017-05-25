@@ -1,0 +1,14 @@
+1. jdk和jre
+jdk: java development kit
+用于支持java程序开发的最小环境
+jre: java runtime environment
+用于支持java程序运行的标准环境
+jdk包含jre
+
+2. 按照技术服务的领域来划分，java分为以下4个平台：
+Java Card：支持一些java小程序运行在小内存设备
+Java ME(Micro Edition)：支持Java程序运行在移动终端上的平台。
+Java SE(Standard Edition)：支持桌面级的应用。简称J2SE
+Java EE(Enterprise Edition)：支持多层架构的企业应用，除了提供了Java SE的API，还做了大量的扩充。简称J2EE
+
+

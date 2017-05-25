@@ -1,0 +1,12 @@
+1. maven的架构
+其实mvn就是配置一些classpath和相关的java系统属性，然后执行java命令。--mvn执行的还是java命令，其实mvn就是把一些繁琐的java命令给整合在一起，给用户提供友好的用法而已。
+
+2. 插件
+查看bin/mvn可以看到，里面都是一些java配置。
+而我们经常使用的mvn package/compile/test等功能，都是称为插件提供的功能。
+所以说“Maven 实际上是一个依赖插件执行的框架，每个任务实际上是由插件完成”
+
+3. maven目录结构
+一般主代码放在src/main/java
+测试代码放在src/test/java
+一般我们类的包名都是和groupId.artifactId保持一致。这样更符合逻辑，一般都这样做。

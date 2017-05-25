@@ -1,0 +1,72 @@
+一、 概述 
+void f() throws Exception{
+	try{
+		throw new Exception("xxx");
+	} catch(Exception e) {
+		throw e;
+	}
+}
+1. catch匹配的时候遇到第一个类型符合的进入
+2. f() {} 除类型为RuntimeException的异常外，不会抛出任何异常。
+3. catch(Exception e) 这可以捕获任何异常
+4. 如果在catch重新抛出异常，会直接函数返回，不会被剩下的catch捕获。
+
+二、 重新抛出异常
+直接throw捕获到的异常的句柄，这样异常堆栈就可以找到最开始抛出异常的位置。
+如果重新new一个异常，这样异常堆栈就只能找到new异常的地方。
+public class test{
+    static void ffff()  throws Exception{
+        throw new Exception("ffff");
+    }
+    static void tttt() throws Exception {
+        try {
+            ffff();
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+    static void rrrr() throws Exception {
+        try {
+            ffff();
+        } catch (Exception e) {
+            throw new Exception("rrrr");
+        }
+    }
+    public static void main(String[] args){
+        try {
+            tttt();
+            /** OUTPUT
+             * java.lang.Exception: ffff
+             at test.test.ffff(test.java:15)
+             at test.test.tttt(test.java:19)
+             at test.test.main(test.java:33)
+             */
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            rrrr();
+            /** OUTPUT
+             * java.lang.Exception: rrrr
+             at test.test.rrrr(test.java:28)
+             at test.test.main(test.java:44)
+             */
+            /
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+三、 Java标准异常
+Throwable是一切可抛出的基类。它有两个子类：Error和Exception。
+Error：一般是指编译和系统错误。一般程序里不做刻意的捕获。
+其实这两个子类几乎毫无差别(其实这两个子类只是一些构造器，实质上函数都在Throwable)
+只是一般程序都只是捕获Exception。所以如果throw一个Error，则一般程序就会直接终止。
+
+
+
+
+
+
+

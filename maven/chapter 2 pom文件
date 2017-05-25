@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<modelVersion>4.0.0</modelVersion> 
+<groupId>com.juvenxu.mvnbook</groupId> 
+<artifactId>hello-world</artifactId> 
+<version>1.0-SNAPSHOT</version>
+ <name>Maven Hello World Project</name>
+</project>
+
+modelVersion：指定当前POM模型的版本，这个很少改变。目前maven 2和maven 3都是用的4.0.0版本。
+groupId+artifactId+version: maven中的项目坐标。
+name：项目的描述。这个可以省略。
+
+<dependency>
+ <groupId>junit</groupId> 
+ <artifactId>junit</artifactId>
+  <version>4.7</version>
+   <scope>test</scope> -- 指明元素的依赖范围，即junit只会作用于test代码中。如果不声明依赖范围，默认是compile
+</dependency>
+

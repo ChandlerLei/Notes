@@ -1,0 +1,9 @@
+1. Collection与Collections的区别
+Collection是一个接口，表示集合的概念。直接继承接口有List与Set
+Collections是一个工具类，操作对象是Collection对象。比如sort/reverse/fill等
+
+2. Arrays与Collections的区别
+都是工具类
+Arrays的操作对象是数组
+Collections的操作对象是集合
+

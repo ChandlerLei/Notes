@@ -1,0 +1,150 @@
+一、 数组
+1. 初始化
+很简单：
+A[] a; //此时a是等于null的。
+A[] a = new A[10];
+A[] a = new A[] {new A(1), new A(2)};
+int[] a = new int[] {1, 2, 3};
+数组元素在创建时，会自动初始化为null或者0或者false。--和类成员一样。
+
+二、 集合
+1. 特点
+只能是对象句柄，不可是基本类型(数组是可以的)
+长度可变。
+常见的为：vector/bitset(位集)/stack(堆栈)/hashtable(散列表)
+2. 缺点
+由于可以将任何Object放入，所以元素会丢失类型信息
+Vector v = new Vector();//显然没有C++的泛型的话，接受的都是Object。
+所以使用的时候，还要转回来。
+总之不好用。
+
+三、 枚举器
+功能有点像C++迭代器，目的就是为了遍历集合。
+Vector<Integer> vector = new Vector<>();
+vector.add(1);
+vector.add(2);
+Enumeration enumeration = vector.elements();
+while(enumeration.hasMoreElements()) {
+    System.out.println(enumeration.nextElement());
+}
+用法很简单，其实就是一个接口。
+实现了这个接口的有the elements of a vector, the keys of a hashtable, and the values in a hashtable.
+
+由于vector其实并不实用，所以这个枚举器用的也不多。
+另一个接口Iterator针对Collections来做的“迭代器”接口，比这个要实用一些。
+
+四、 封装器
+我们知道Java对基本类型都做了封装器。其实就是一个类。
+注意：我们能对封装器的操作就是初始值，然后得到值。无法修改。
+Integer i = new Integer(2);
+i = 3;//此时i已经指向的另一个对象了。显然无法对一个对象进行操作符重载。
+
+五、Hashtable
+用法很简单：
+Hashtable hashtable = new Hashtable();
+hashtable.put("122", 123);
+注意如果我们把一个类对象当做key，则需要注意：
+class Te{
+    private int i;
+    public Te(int i) {
+        this.i = i;
+    }
+}
+public class test{
+    public static void main(String[] args){
+        Hashtable hashtable = new Hashtable();
+        hashtable.put(new Te(1), 1);
+        if (hashtable.containsKey(new Te(1))) {
+            System.out.println("weqqwe");//这里不会走到这里
+        }
+    }
+}
+如果想要让两个Te保持相同的key，则需要重写Te的hashcode和equals函数？
+答：其实Hashtable内部就是散列表，并且是线性散列法。hashcode就是一个对象映射key1成一个整数的code(默认是这个对象的地址)，这个code是散列函数的输入，得到数组的index，通过index得到value。注意因为可能会冲突，所以得到index后，需要比较数组index的key是否和key1相等(调用的就是equals，而默认对象的euqals比较的就是对象的地址)。--所以需要hashcode和equals函数。
+class Te{
+    private int i;
+    public Te(int i) {
+        this.i = i;
+    }
+    @Override
+    public int hashCode() {
+        return this.i;
+    }
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof Te) && (this.i == ((Te) o).i);
+    }
+}
+public class test{
+    public static void main(String[] args){
+        Hashtable hashtable = new Hashtable();
+        hashtable.put(new Te(1), 1);
+        if (hashtable.containsKey(new Te(1))) {
+            System.out.println("weqqwe");//会走到这里
+        }
+    }
+}
+
+六、 新的容器
+1. 概述
+pic/容器之间的关系.png
+
+2. List接口
+注意：list还是个集合，不可是基本类型。
+特点：有序，相比collection增加了很多接口
+(1) 有两个主要的实现类:ArrayList和LinkedList
+ArrayList: 内部数组实现，所以随机访问效率还不错，对于中间位置的插入和删除效率不高。--**最常用的**--
+LinkedList:内部双向链表实现，所以随机访问效率很低，对于中间位置的插入和删除效率很好。而且还有一些额外函数addFirst(), addLast(), getFirst(), getLast(), removeFirst(), and removeLast()，所以可用于stack、queue、deque等。
+(2) ArrayList中的toArray函数
+Object[] toArray()//这个其实内部就调用Arrays.copyOf函数，返回一个数组。
+public <T> T[] toArray(T[] a) {
+    if (a.length < size)
+        // Make a new array of a's runtime type, but my contents:
+        return (T[]) Arrays.copyOf(elementData, size, a.getClass());
+    System.arraycopy(elementData, 0, a, 0, size);
+    if (a.length > size)
+        a[size] = null;
+    return a;
+}
+这个蛮有意思的，无论传入的a大小是多少，都可以返回正确的结果--类型为T[]的数组。
+
+3. Set接口
+特点：唯一(插入相同的值，只会保存一个)，无序，必须实现equals方法。
+(1) 有两个主要的实现类:HashSet(常用)和TreeSet
+HashSet，用HashMap实现，由于也用到散列表，所以也要实现hashCode(之前讲过，和hashTable一样)。
+还有一个ArraySet，这个是用数组实现的，这个面向非常小的Set设计，创建和删除代价比较小，但随着Set的增大，它的性能也会大打折扣。
+TreeSet，用红黑树实现，排序了的Set。
+
+4. Map接口
+(1) 有两个主要的实现类:HashMap(常用)和TreeMap
+HashMap，这个显然就是用散列表实现，用于代替hashtable。
+ArrayMap和TreeMap--与上面的ArraySet和TreeSet一样：
+ArrayMap面向小的Map设计，TreeMap红黑树实现，排了序的Map。
+
+5. 总结一下使用场景
+List:一般首选ArrayList，只有在频繁的插入和删除的时候考虑一下LinkedList
+Set:一般首选HashSet，其他都不推荐。
+Map:一般首选HashMap，其他都不推荐。
+
+6. UnsupportedOperationException
+我们知道数组转换为List时，可以使用Arrays.asList。
+但是要特别注意：这个函数返回的ArrayList是Arrays自己的一个内部类，而非通用的ArrayList类，其是一个固定大小的List，不可add/remove等操作(内部由一个固定大小的数组实现)。
+如果List<Integer> l = Arrays.asList(1, 2); l.add(1);//此时就会报UnsupportedOperationException
+
+同样地我们喜欢在一些函数内return Collections.EMPTY_LIST;而这个EMPTY_LIST返回的是Collections的一个内部类，其并没有实现add函数。
+
+所以当我们使用这些Collections和Arrays的时候，要当心，不可默认返回的都是常用的那些类。
+
+7. 排序和搜索
+Arrays.sort/binarySearch
+Collections.sort/binartSearch
+
+8. 使Collections、Map不可修改
+a = Collections.unmodifiableList(a);
+
+
+
+
+
+
+

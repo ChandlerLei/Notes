@@ -1,0 +1,210 @@
+一. 内部类
+1. 使用方式
+class A {
+    class B{
+
+    }
+    private void f(){
+        B b = new B();
+    }
+    public static void fa() {
+        A.B b = new A.B();
+    } 
+}
+除了在外部类非static函数中外，访问内部类都要使用外部类.内部类这种方式
+class Test{
+   class A {
+   }
+}
+public class Main {
+    public static void main(String[] args) {
+        Test.A sa = new Test.A();//ERROR 内部类相当于外部类的一个成员，所以必须有外部类的对象才能定义内部类
+        Test test = new Test();
+        test.A aa = new test.A();// ERROR 非static内部类在外部不可直接定义。
+    }
+}
+注意：非static内部类，在外部类的外部，不可直接创建，如果真的想创建请见6。
+2. 防止使用者类型编码
+interface A {
+    void f();
+}
+class B {
+    private class C implements A 
+    {
+        public void f(){}
+    }
+    public A getC(){
+        return new C();
+    }
+}
+这样，用户只能通过接口A来获取C的实例，防止使用者类型编码。
+注意：普通(非内部)类不可设为private或protected——只允许public或者“友好的”。
+3. 内部类可以在函数内创建
+interface A {void f();}
+class B {
+    public A fun() {
+        class C implements A {
+            public void f(){}
+        }
+        return new C();
+    }
+    //在函数外部可以访问C
+}
+注意：不能因为C只存在fun函数内，外部调用fun得到的C就不可用了。这是不对的，是可用的。
+4. 匿名内部类
+(1) 概述
+class A {
+    public A() {System.out.println("A init");}
+}
+class Test{
+    public A getA() {
+        return new A() {
+          private int i = 1;
+          public void print() {System.out.println(i);}
+        };
+    }
+}
+可以看到getA中new A的定义了一些额外的东西。
+其实匿名类就是A的子类。
+(2) 父类有参构造
+class A {
+    public A(int i) {System.out.println("A init:" + i);}
+}
+class Test{
+    public A getA(int i) {
+        return new A(i) { //在这里直接传给A就可以了，无需进行super调用
+          private int i = 1;
+          public void print() {System.out.println(i);}
+        };
+    }
+}
+(3) 给子类传递参数
+class A {
+    public A() {System.out.println("A init:");}
+}
+class Test{
+    public A getA(final int t) {//注意此时t必须是final的。
+        return new A() {
+          private int i = t;
+          public void print() {System.out.println(i);}
+        };
+    }
+}
+4. 链接到外部类
+非static内部类可以直接访问外部类的任何成员--和C++不同
+class Test{
+   private String[] a;
+   class A {
+       public void f() {
+           System.out.println(a.length);//OK 内部可以访问外部类的任何成员
+       }
+   }
+}
+
+匿名内部类的一个有趣的用法：
+interface sad {
+    void ff ();
+}
+
+public class test{
+    public static void ffff( sad s) {
+        s.ff();
+    }
+    public static void main(String[] args){
+        ffff(new sad() { //此时这个匿名内部类就是实现了sad接口。对于一些入参是接口的函数而言，这个匿名内部类感觉起来就非常好用了。
+            @Override
+            public void ff() {
+                System.out.println("ssssss");
+            }
+        });
+    }
+}
+
+
+5. static内部类
+static内部类和普通的外部类几乎一样。
+class Test{
+   private String[] a;
+   class B {
+       static int i = 1;//ERROR static成员只能拥有一个类的外部级别
+   }
+   static class A {
+       static int i = 1;//OK static内部类是可以声明static成员的，因为static内部类和普通的外部类类似。
+       public void f() {
+           //System.out.println(a.length);//ERROR 不可再访问外部类
+           System.out.println(i);
+       }
+   }
+}
+public class Main {
+    public static void main(String[] args) {
+        Test.A as = new Test.A();
+        as.f();
+    }
+}
+6. 如何创建一个非static内部类对象
+class Test{
+   class B {
+   }
+}
+public class Main {
+    public static void main(String[] args) {
+        Test test = new Test();
+        Test.B b = test.new B();
+    }
+}
+非static内部类都拥有一个指向外部类的链接，这里我们就是用到了这个链接来创建。
+7. 继承内部类
+由于实例化内部类的时候一定要先实例化外部类，所以在继承内部类的时候，需要传给子类构造器一个外部类的实例。
+class Test{
+   class B {
+   }
+}
+class A extends Test.B {
+    public A(Test test) {
+        test.super();//这种用法觉得很怪异
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        Test test = new Test();
+        A a = new A(test);
+    }
+}
+8. 总结一下内部类的特性
+可以访问外部类所有成员
+private具有很好地封闭性
+这两点特性一般经常用到。
+
+二、 构造器与多态
+如果在构造器中调用多态函数会有什么效果？
+abstract class A {
+    abstract void func();
+    A() {
+        func();
+    }
+}
+class B extends A {
+    private int i = 1;
+    void func() {
+        System.out.println(i);
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        B b = new B();//输出0
+    }
+}
+解释：
+(1) 此时func的确是多态，调用了B重写的func函数
+(2) 而在构造A时，B还不存在，其i还没进行初始化，Java会自动为对象的存储空间赋值二进制0，所以得到的是0.
+结论：所以在构造器中尽量不要调用非final方法。
+
+
+
+
+
+
+
+
+

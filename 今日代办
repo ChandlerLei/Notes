@@ -1,0 +1,2 @@
+1. 使用redis实现分布式锁
+2. 搞一下责任链模式、filter模式、interceptor模式

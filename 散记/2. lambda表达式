@@ -1,0 +1,35 @@
+1. java 8的新特性
+functional interface(函数式接口)
+--即只拥有一个方法的接口。
+lambda表达式
+--目的把函数作为一个方法的参数
+语法：
+parameters -> expression
+(parameters) -> {statements;}
+*可选类型声明：不需要声明参数类型，编译器可以统一识别参数值。
+*可选的参数圆括号：一个参数无需定义圆括号，但多个参数需要定义圆括号。
+*可选的大括号：如果主体包含了一个语句，就不需要使用大括号。
+*可选的返回关键字：如果主体只有一个表达式返回值则编译器会自动返回值，大括号需要指定明表达式返回了一个数值
+
+
+例子：
+public class Main {
+	//函数式接口
+    interface TestInterface{
+        void func(String s);
+    }
+    //看起来好像是传递了函数，其实还是对象给接口传值。
+    static void func(String s, TestInterface testInterface){
+        testInterface.func(s);
+    }
+    public static void main(String[] args) {
+        TestInterface testInterface = s->System.out.println(s);//可以看到lambda表达式的返回是一个实现了函数式接口的类对象。由于函数式接口只有一个方法，所以lambda实现的肯定就是这个方法，所以上面说parameters是不用声明参数类型的。
+        func("abcd", testInterface);
+    }
+}
+
+2. java 8中List、Map对象都有一个forEach的方法，这个方法参数为一个函数式接口，所以：
+List<String> stringList = new ArrayList<>(Arrays.asList(new String[]{"a", "b", "c"}));
+stringList.forEach(s -> System.out.println(s));
+
+

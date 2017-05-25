@@ -1,0 +1,43 @@
+1. TimeUnit
+每个语言都会有的一些常量类。
+TimeUnit就是Java里的时间常量类。
+比如1分钟==xxxx毫秒，这种。
+
+2. stream中的map/filter中为何不能抛异常？
+public class Test2 {
+    public static void f(Integer a) throws Exception {
+
+    }
+    public static void main(String[] args) {
+        List<Integer> aa = new ArrayList<>();
+        aa.stream().map(a->f(a)).collect(Collectors.toList());//ERROR
+    }
+}
+其实道理很简单，map接收的是一个interface，我们传入的本质其实就是实现了这个接口函数的类。而这个接口函数的定义就是没有声明throw异常的。所以在这里不可以抛异常。
+但是可以抛RuntimeException，为何？因为它是unchecked Exception。
+那么什么是checked Exception？什么又是unchecked Exception？
+checked Exception：Exception的子类且不是RuntimeException的子类。
+--特点：抛了必须catch或声明throws异常。
+unchecked Exception：RuntimeException的子类。其实RuntimeException也是Exception的子类。
+--特点：抛了就抛了，尽管函数没有声明throws异常，也可以抛。
+public class Test2 {
+//    void f1(){
+//        throw new Exception("111"); //ERROR
+//    }
+    void f2() {
+        throw  new RuntimeException("111"); //OK
+    }
+    void f3() throws Exception {
+        throw new Exception("1111"); //OK
+    }
+    static void f4() {
+        try{
+            throw new RuntimeException("111");
+        } catch (RuntimeException e) { // unchecked Exception也可以被catch住的。
+            System.out.println("ere");
+        }
+    }
+    public static void main(String[] args) {
+        f4();//OUTPUT:ere
+    }
+}

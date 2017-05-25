@@ -1,0 +1,129 @@
+1. java中的继承
+关键字：extends
+和C++一样。子类对象中包含父类对象。子类构造器中必须有权限对父类进行构造。
+关键字：super可以调用父类。
+super(1); // 子类构造器中对父类进行构造，必须是第一行代码。
+super.func(); //子类方法中对父类方法的调用。
+
+2. java继承中的重载
+这和C++不一样。
+子类的同名方法会重载父类的同名方法。
+
+3. final关键字
+和C++中的const很类似。
+(1) final修饰字段
+当修饰基本类型时，表示该值是不可改变的数。
+当修饰非基本类型时，这个句柄必须初始化一个具体的对象。且永远不可将句柄指向另一个对象。但是这个句柄指向的对象内的变量是可以修改的。--数组和对象同理。
+
+final int i = 9; //i在编译期确定
+final int j = (int)(Math.random()*20); //在执行期确定
+final Test a = new Test(); //a不可指向其他对象，但a内部变量可以改变。
+final int[] a = new int[12]; //a不可指向其他数据，a[1]是可以改变的。
+
+一般我们使用常数时，喜欢这么用：
+final static int i = 12; //一个类只有一个值，且永不改变。
+
+final int k; //java里允许这样的语法。定义一个不可改变的值，但不做初始化。
+这么做的目的就是为了，类的不同对象可以拥有不同的final值。
+(2) final修饰方法
+两个目的：final修饰的方法不可被子类覆盖重写；final修饰的方法，编译器会把对这个方法的调用替换为方法的主体，减少调用开销--有点像C++中的inline。
+类中的private方法自动就是final的，如果在private方法加上final，没有什么额外的作用。
+
+为何final方法可以inline？
+因为在Java中存在多态，即运行时绑定方法，即编译的时候并不知道方法调用的方法主体。而final方法是不允许重载覆盖的，所以在编译时就可以确定方法主体，所以具有inline效果。
+
+(3)final修饰类
+作用：修饰的类不可被继承。
+副作用：因为不可被继承所以类中的方法也是final的。
+除此之外，没有任何不同。
+
+6. 初始化与类装载
+我们知道C++这类语言，是将所有的代码一次性载入，然后初始化、执行。
+Java是解释性语言，它是讲所有的代码编译，每个class一个文件，除非真的需要，否则不会将class文件载入。
+所以两个类是否写在一个文件中对加载顺序无区别。加载是按照类为单位的。
+
+static何时被加载初始化？
+前面我们说过两点：
+当new包含static变量类对象时；当直接使用类名引用类static变量时。
+现补充：
+当当new包含static变量类的子类对象时。
+class Test4 {
+    static {
+        System.out.println("Test4 static block");
+    }
+}
+class Test5 extends Test4{
+    static public int i = 5;
+    static {
+        System.out.println("Test5 static block");
+    }
+}
+public class test{
+    public static void main(String[] args){
+        System.out.println(Test5.i);
+    }
+}
+//output
+Test4 static block
+Test5 static block
+5
+可以看出，只是引用了Test5的i，就导致了Test5和父类Test4中所有static的初始化。
+
+7. abstract类
+(1) 至少拥有一个abstract方法的类，必须声明为abstract类。
+(2) abstract类不可以实例化自身的对象。
+(3) abstract类中可以不含有abstract方法。
+(4) 子类继承abstract类，必须实现所有abstract方法，不然的话子类还是抽象类。
+
+8. interface接口
+更像一个“纯”抽象类。
+所有方法只有定义没有实现。
+可以拥有变量--默认都是final和static--即必须定义时初始化。
+和class一样，一个文件中只能有一个public的interface，且与文件名同名。
+默认interface中的方法是public，所以定义方法无需再加public。
+实现interface的类使用implements关键字。
+
+9. Java中的“多重继承”
+我们知道Java中不存在多重继承。但是一个类可以同时extends A, implements B,C
+注意extend A必须放在前面。
+class A {
+    public void fly{}
+}
+interface B {
+    void fly();
+}
+interface C {
+    void fff();
+}
+class D extends A, implements B,C {
+    public void fff(){}
+}
+D d = new D();
+d.fly();//这样做是OK的，因为在A中已经有了fly的定义。
+
+10. 重载
+class Test {
+    private void f(){}
+    public void f(){}//ERROR
+}
+权限访问符不可作为重载。--往深了想这样是合理的，因为反射的时候可以修改访问权限，这样就不可区分了。
+
+11. 接口是可以继承的
+interface A {
+    void f();
+}
+interface B {
+    void ff();
+}
+interface C extends A, B { //且是可以多重继承的
+    void fff();
+}
+
+12. 注意根据 Java 命名规则,拥有固定标识符的 static final 基本数据类型(亦即编译期常数)都全部采用大 写字母(用下划线分隔单个标识符里的多个单词)
+
+13. 接口和abstract类
+既然已经有接口，为何还需要抽象类？
+抽象类存在的目的就是：实现接口的一些通用的方法，以至于不让每个子类都实现接口的每个方法。
+
+
+
